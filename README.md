@@ -14,10 +14,9 @@ Since the first version of this report, the project has moved from a single flat
 
 ## Deliverables
 
-This project now produces three companion artifacts, each suited to a different use:
+This project now produces two companion artifacts, each suited to a different use:
 
 - **`suicide_rates_powerbi.xlsx`** — the primary analytical deliverable. A three-sheet workbook (Data, Data Dictionary, Key Insights) built from the enriched, properly-dimensioned extract described below, meant to be imported directly into Power BI.
-- **`SuicideMix_PowerBI_Build_Guide.docx`** — a step-by-step guide specifying the exact Power BI report pages, visuals, filters, and DAX measures needed to turn that workbook into a multi-page analyst report (national trend, sex comparison, age analysis, a sex-by-age matrix, and race/ethnicity trends).
 - **An interactive HTML dashboard** — a lighter-weight, browser-based companion view built earlier in the project, reading from the original `suicide_data` MySQL table. It remains a useful quick-look tool for browsing the same demographic groups, but the Power BI workbook above is now the more complete and more rigorously dimensioned dataset, and is the one to use for any deeper analysis.
 
 ## Data Quality Issues and Corrections
