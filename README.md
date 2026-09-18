@@ -6,7 +6,7 @@
 
 ## Overview
 
-This report documents the cleaning and preparation of a CDC/NCHS "Death rates for suicide, by sex, race, Hispanic origin, and age" dataset, and summarizes what the cleaned data shows. The raw file contains 6,390 rows covering the United States from 1950 through 2018 (data points are decennial before 1980 — 1950, 1960, 1970 — and annual from 1980 onward), broken out by sex, age group, race, and Hispanic origin. The pipeline was built in a Google Colab notebook using pandas, and the corrected output was exported to a MySQL database hosted on Aiven for downstream use.
+This report documents the cleaning and preparation of a CDC/NCHS "Death rates for suicide, by sex, race, Hispanic origin, and age" dataset, and summarizes what the cleaned data shows. The raw file contains 6,390 rows covering the United States from 1950 through 2018 (data points are decennial before 1980 and annual from 1980 onward), broken out by sex, age group, race, and Hispanic origin. The pipeline was built in a Google Colab notebook using pandas, and the corrected output was exported to a MySQL database hosted on Aiven for downstream use.
 
 The raw data had five distinct quality problems that needed to be resolved before it could be trusted: a mix of two incompatible rate types in the same table, a block of duplicate demographic categories, a small number of rows that collided on the same demographic/year key, several hundred missing rate values, and (on the engineering side) a couple of pipeline bugs that had nothing to do with the data itself but would have broken the export. Each is described below along with how it was fixed and how the fix was verified.
 
