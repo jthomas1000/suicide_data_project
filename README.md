@@ -12,6 +12,25 @@ The raw data had five distinct quality problems that needed to be resolved befor
 
 Since the first version of this report, the project has moved from a single flat demographic grouping to a properly dimensioned extract — Sex, Age Group, and Race/Ethnicity as separate columns rather than folded into one label — built specifically to support ranked comparisons, a sex-by-age matrix, and race/ethnicity trends in Power BI. That rebuild also fixed, at the source, a bug that the original flat grouping had introduced (see "Fixing the race/ethnicity sex-collapse bug at the source" below). The findings section has been expanded accordingly with results only visible once sex and age can be crossed against each other and against race.
 
+## Output screenshots
+
+Captured on September 27, 2026 by re-running `SuicideMix.ipynb` against the
+CDC/NCHS source CSV. The Colab Drive mount and the MySQL export cells were
+skipped because they need account credentials. The regenerated Power BI
+extract matched `suicide_rates_powerbi.xlsx` row for row.
+
+**Cleaning pipeline output**
+
+![Notebook output: crude-rate filter, duplicate handling, imputation counts, Power BI extract](screenshots/pipeline_run.png)
+
+**Rate by sex over time**
+
+![Crude suicide death rate by sex, 1950-2018](screenshots/rate_by_sex_over_time.png)
+
+**Rate by age group, 1950 vs 2018**
+
+![Crude suicide death rate by age group, 1950 vs 2018](screenshots/rate_by_age_group.png)
+
 ## Deliverables
 
 This project now produces two companion artifacts, each suited to a different use:
