@@ -52,7 +52,7 @@ Separately from the data itself, two engineering bugs in the notebook were found
 
 ## Final Dataset
 
-After all corrections, the cleaned dataset contains 1,092 rows spanning 21 demographic groups (10 age bands, 5 race/ethnicity categories, and male/female) across years 1950–2018. It was exported to the `suicide_data` table in a MySQL database on Aiven, with indexes on `YEAR` and `demographic_group` to support the kinds of time-series and group-comparison queries a dashboard would need. The connection uses a TLS-verified link authenticated against Aiven's own CA certificate, rather than falling back to an unverified connection.
+After all corrections, the cleaned dataset contains 1,092 rows spanning 21 demographic groups (14 age bands, some overlapping as NCHS publishes them, 5 race/ethnicity categories, and male/female) across years 1950–2018. It was exported to the `suicide_data` table in a MySQL database on Aiven, with indexes on `YEAR` and `demographic_group` to support the kinds of time-series and group-comparison queries a dashboard would need. The connection uses a TLS-verified link authenticated against Aiven's own CA certificate, rather than falling back to an unverified connection.
 
 ### The enriched Power BI extract
 
