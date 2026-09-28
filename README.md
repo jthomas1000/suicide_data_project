@@ -12,6 +12,25 @@ The raw data had five distinct quality problems that needed to be resolved befor
 
 Since the first version of this report, the project has moved from a single flat demographic grouping to a properly dimensioned extract — Sex, Age Group, and Race/Ethnicity as separate columns rather than folded into one label — built specifically to support ranked comparisons, a sex-by-age matrix, and race/ethnicity trends in Power BI. That rebuild also fixed, at the source, a bug that the original flat grouping had introduced (see "Fixing the race/ethnicity sex-collapse bug at the source" below). The findings section has been expanded accordingly with results only visible once sex and age can be crossed against each other and against race.
 
+## Output screenshots
+
+Captured on September 27, 2026 by re-running `SuicideMix.ipynb` against the
+CDC/NCHS source CSV. The Colab Drive mount and the MySQL export cells were
+skipped because they need account credentials. The regenerated Power BI
+extract matched `suicide_rates_powerbi.xlsx` row for row.
+
+**Cleaning pipeline output**
+
+![Notebook output: crude-rate filter, duplicate handling, imputation counts, Power BI extract](screenshots/pipeline_run.png)
+
+**Rate by sex over time**
+
+![Crude suicide death rate by sex, 1950-2018](screenshots/rate_by_sex_over_time.png)
+
+**Rate by age group, 1950 vs 2018**
+
+![Crude suicide death rate by age group, 1950 vs 2018](screenshots/rate_by_age_group.png)
+
 ## Deliverables
 
 This project now produces two companion artifacts, each suited to a different use:
@@ -33,7 +52,7 @@ Separately from the data itself, two engineering bugs in the notebook were found
 
 ## Final Dataset
 
-After all corrections, the cleaned dataset contains 1,092 rows spanning 21 demographic groups (10 age bands, 5 race/ethnicity categories, and male/female) across years 1950–2018. It was exported to the `suicide_data` table in a MySQL database on Aiven, with indexes on `YEAR` and `demographic_group` to support the kinds of time-series and group-comparison queries a dashboard would need. The connection uses a TLS-verified link authenticated against Aiven's own CA certificate, rather than falling back to an unverified connection.
+After all corrections, the cleaned dataset contains 1,092 rows spanning 21 demographic groups (14 age bands, some overlapping as NCHS publishes them, 5 race/ethnicity categories, and male/female) across years 1950–2018. It was exported to the `suicide_data` table in a MySQL database on Aiven, with indexes on `YEAR` and `demographic_group` to support the kinds of time-series and group-comparison queries a dashboard would need. The connection uses a TLS-verified link authenticated against Aiven's own CA certificate, rather than falling back to an unverified connection.
 
 ### The enriched Power BI extract
 
@@ -66,7 +85,7 @@ Two patterns stand out much more clearly than the overall trend. The first is se
 | Ages 25–34 | 14.34 |
 | Ages 20–24 | 13.85 |
 | White | 13.46 |
-| Native American or Pacific Islander | 11.57 |
+| Native American or Alaska Native | 11.57 |
 | Ages 15–24 | 11.32 |
 | Ages 15–19 | 8.74 |
 | Asian | 6.09 |
@@ -75,7 +94,7 @@ Two patterns stand out much more clearly than the overall trend. The first is se
 | Female | 5.05 |
 | Ages 10–14 | 1.41 |
 
-Race and Hispanic-origin categories show a wider spread than might be expected: White (13.46) and Native American or Pacific Islander (11.57) populations have the highest average rates among these groups, roughly double the rates for Asian (6.09), Black (5.99), and Hispanic or Latino (5.85) populations.
+Race and Hispanic-origin categories show a wider spread than might be expected: White (13.46) and Native American or Alaska Native (11.57) populations have the highest average rates among these groups, roughly double the rates for Asian (6.09), Black (5.99), and Hispanic or Latino (5.85) populations.
 
 ## Deeper Findings: Trends, Not Just Averages
 
@@ -92,7 +111,7 @@ These figures, along with the headline metrics behind them, are also available a
 
 ## Fixing the Race/Ethnicity Sex-Collapse Bug at the Source
 
-An earlier version of this project surfaced a data-quality problem while building the first companion dashboard: the five race/ethnicity groups (White, Black, Asian, Hispanic or Latino, Native American or Pacific Islander) each carried two rows per year in the exported `suicide_data` table instead of one. Comparing the values showed why — each pair was actually that race's male and female rate, but the pipeline's `demographic_group` construction step had collapsed both into the same label without keeping sex distinct. Age and sex groups weren't affected; only the race/ethnicity breakdown had lost that dimension. It didn't change any of the full-period averages reported above (an average of the two sub-rates equals the combined-sex rate either way), but it meant a query expecting one row per (race, year) would silently double-count, and a time-series chart built directly from the table would zig-zag between the male and female series instead of showing a clean trend.
+An earlier version of this project surfaced a data-quality problem while building the first companion dashboard: the five race/ethnicity groups (White, Black, Asian, Hispanic or Latino, Native American or Alaska Native) each carried two rows per year in the exported `suicide_data` table instead of one. Comparing the values showed why — each pair was actually that race's male and female rate, but the pipeline's `demographic_group` construction step had collapsed both into the same label without keeping sex distinct. Age and sex groups weren't affected; only the race/ethnicity breakdown had lost that dimension. It didn't change any of the full-period averages reported above (an average of the two sub-rates equals the combined-sex rate either way), but it meant a query expecting one row per (race, year) would silently double-count, and a time-series chart built directly from the table would zig-zag between the male and female series instead of showing a clean trend.
 
 At the time, the dashboard worked around this by averaging same-year duplicates per group at display time — a reasonable patch, but not a fix. The enriched extract described above fixes it properly, at the source: the pipeline's `Sex and race` breakdown reports each race once per sex (for example, separate "Male: White" and "Female: White" rows), and the new extraction step parses that label into two explicit columns — `Sex` and `Race/Ethnicity` — instead of discarding the sex half. The `suicide_rates_powerbi.xlsx` workbook and the Power BI report built from it now carry race and sex as genuinely independent dimensions, so no display-layer averaging is needed to get a clean per-(race, year) series.
 
